@@ -166,7 +166,7 @@ export K3S_TOKEN="WRITE_ANY_TOKEN"
 INSTALL_K3S_SKIP_DOWNLOAD=true ./install.sh
 ```
 
-### 5. Configure Pod Sandbox Image
+### 5. Configure Pod Sandbox Image (Only if you encounter sandbox issues)
 
 To ensure that K3s uses images from your private registry, you need to update the sandbox images used by `containerd`.
 

@@ -155,16 +155,29 @@ chmod +x /usr/local/bin/k3s
 ```
 chmod +x install.sh
 ```
-### 4.3 Install K3s Server Node
-1. Set an environment variable for the K3s token (used for node registration):
-```
-export K3S_TOKEN="WRITE_ANY_TOKEN"
-```
-2. Run the installation script, skipping the binary download since it is already present:
+  ### 4.3 Install K3s Server (Single Controle Plane Node)
+  1. Set an environment variable for the K3s token (used for node registration):
+  ```
+  export K3S_TOKEN="WRITE_ANY_TOKEN"
+  ```
+  2. Run the installation script, skipping the binary download since it is already present:
 
-```
-INSTALL_K3S_SKIP_DOWNLOAD=true ./install.sh
-```
+  ```
+  INSTALL_K3S_SKIP_DOWNLOAD=true ./install.sh
+  ```
+Note: The Datebase in This Case will be sqllite
+### 4.4 Install K3s Server (Single Controle Plane Node)
+
+1. Set an environment variable for the K3s token (used for node registration):
+  ```
+  export K3S_TOKEN="WRITE_ANY_TOKEN"
+  ```
+  2. Run the installation script, skipping the binary download since it is already present:
+
+  ```
+  INSTALL_K3S_SKIP_DOWNLOAD=true ./install.sh --cluster-init
+  ```
+Note: The Datebase in This Case will be etcd
 
 ### 5. Configure Pod Sandbox Image (Only if you encounter sandbox issues)
 

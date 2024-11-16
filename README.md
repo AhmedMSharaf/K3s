@@ -24,6 +24,7 @@ K3s simplifies Kubernetes setup by including all the necessary components in a "
 ## 🛠️ Installation Steps
 
 Follow these steps to set up an air-gapped K3s cluster with a private registry. 
+
 **Note**: These steps assume that the firewall is disabled. If you intend to perform the installation with the firewall enabled, please review the necessary ports that must be open on the master and worker nodes. For more information, refer to the [K3s Networking Requirements](https://docs.k3s.io/installation/requirements#networking).
 
 

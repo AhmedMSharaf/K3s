@@ -22,7 +22,7 @@ K3s comes pre-bundled with essential components for a fully functional Kubernete
 K3s simplifies Kubernetes setup by including all the necessary components in a "batteries-included" approach. It streamlines the process of setting up a cluster, making it an excellent choice for quick deployments and air-gapped environments.
 
 ## 🛠️ Installation Steps
-
+Follow these steps to set up an air-gapped K3s cluster with a private registry. 
 **Note**: These steps assume that the firewall is disabled. If you intend to perform the installation with the firewall enabled, please review the necessary ports that must be open on the master and worker nodes. For more information, refer to the [K3s Networking Requirements](https://docs.k3s.io/installation/requirements#networking).
 
 

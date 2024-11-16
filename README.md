@@ -215,6 +215,61 @@ k3s kubectl get nodes
 ```
 k3s kubectl get pods -A
 ```
+ ## Add a Another Controle Plane Node to the Cluster
+
+  ### 1. Ensure the K3s CLI Binary is Installed on the Controle Plane Node
+
+  Make sure that you have the `k3s` CLI binary available on the Controle Plane Node.
+
+  ### 2. Get the Node Token from the First  Controle Plane Node
+
+  On the master node, retrieve the node token by running the following command:
+
+  ```bash
+  cat /var/lib/rancher/k3s/server/token
+  ```
+
+### 3. Configure the Private Registry for K3s (Section 3)
+
+
+
+
+5. Copy the Install Script to the Second  Controle Plane Node
+  Copy the install.sh script from the master node to the Second  Controle Plane Node.
+
+  6. Join the the Second  Controle Plane Node  to the Cluster
+
+  Run the following command on the Second  Controle Plane Node  to join it to the cluster:
+
+  ```
+  export K3S_TOKEN="Server1-Token"  
+
+INSTALL_K3S_SKIP_DOWNLOAD=true ./install.sh server \
+  --server https://SERVER1_IP:6443 \
+
+  ```
+  7. Check the Service Status
+
+  Check the status of the K3s  service:
+
+
+  ```
+  sudo systemctl status k3s
+  ```
+
+  8. Check the Logs
+
+
+    To view the logs of the K3s agent, run:
+  ```
+   sudo journalctl -u k3s -f
+  ```
+  9. Verify the Node Status
+  Finally, verify the node status by running:
+  ```
+  k3s kubectl get node
+  ```
+
 
 ## Add a Worker Node to the Cluster
 
@@ -327,3 +382,46 @@ If you encounter an issue where you are unable to view pod logs and receive a "f
     ```
 
 This should resolve the issue and allow you to view the pod logs.
+
+### Issue: Unable to Join Another Control Plane Node due to Existing Hostname in etcd Database
+When trying to join a new control plane node and encountering an error indicating that the hostname already exists in the etcd database, follow these steps to resolve the issue.
+#### Steps:
+
+
+1. **Access the Master Node** 
+ 
+Log into one of the master nodes that is running properly and ensure that the etcd binary is installed. If it's not installed, download it and transfer the binary to the node under /usr/local/bin.
+
+2. **List Cluster Members**
+
+Use the following command to list the members of the cluster:
+```
+ETCDCTL_API=3 etcdctl \
+  --endpoints=https://127.0.0.1:2379 \
+  --cert=/var/lib/rancher/k3s/server/tls/etcd/server-client.crt \
+  --key=/var/lib/rancher/k3s/server/tls/etcd/server-client.key \
+  --cacert=/var/lib/rancher/k3s/server/tls/etcd/server-ca.crt \
+  member list
+```
+This will display the list of cluster members along with their respective records.
+
+3. **Remove the Existing Record of the Second Control Plane Node**
+
+To remove the record of the second control plane node, run the following command:
+```
+ETCDCTL_API=3 etcdctl \
+  --endpoints=https://127.0.0.1:2379 \
+  --cert=/var/lib/rancher/k3s/server/tls/etcd/server-client.crt \
+  --key=/var/lib/rancher/k3s/server/tls/etcd/server-client.key \
+  --cacert=/var/lib/rancher/k3s/server/tls/etcd/server-ca.crt \
+  member remove <NODE_ID>
+```
+Replace <NODE_ID> with the actual ID of the second control plane node you wish to remove (you will find this in the output of the member list command).
+
+
+4. **Register the Second Control Plane Node Again**
+
+After successfully removing the node record, try registering the second control plane node again.
+
+This should resolve the issue and allow you to join the second control plane node to the cluster.
+

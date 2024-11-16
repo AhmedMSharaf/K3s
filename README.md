@@ -373,6 +373,79 @@ Finally, verify the node status by running:
 ```
 k3s kubectl get node
 ```
+## Kubernetes Master Nodes Load Balancer Setup
+This part describes how to set up a load balancer for Kubernetes master nodes using NGINX in a Docker container. This configuration provides high availability for the Kubernetes API server endpoint.
+
+### Prerequisites
+- A separate machine outside your Kubernetes cluster
+- Docker installed on the machine
+- Access to a private Docker registry
+
+### Setup Instructions
+1. Configure NGINX Image
+```
+# Pull the NGINX image
+docker pull nginx:latest
+
+# Tag the image for your private registry
+docker tag nginx:latest <your-registry>/nginx:v1
+
+# Push to your private registry
+docker push <your-registry>/nginx:v1
+
+```
+
+2. Create NGINX Configuration
+
+Create a new file named nginx.conf with the following content:
+```
+events {}
+stream {
+  upstream k3s_servers {
+    server <MASTER1_IP>:6443;
+    server <MASTER2_IP>:6443;
+    server <MASTER3_IP>:6443;
+  }
+
+  server {
+    listen 6443;
+    proxy_pass k3s_servers;
+  }
+}
+```
+**Note**: Note: Replace <MASTER1_IP>, <MASTER2_IP>, and <MASTER3_IP> with your actual Kubernetes master nodes' IP addresses.
+
+3. Deploy the Load Balancer
+
+Run the NGINX container with the following command:
+```
+docker run -d \
+  --restart unless-stopped \
+  -v ${PWD}/nginx.conf:/etc/nginx/nginx.conf \
+  -p 6443:6443 \
+  <your-registry>/nginx:v1
+```
+
+4. Configure kubectl Access
+
+ Copy the kubeconfig file from any master node:
+
+```
+scp root@<master-node>:/etc/rancher/k3s/k3s.yaml /path/to/your/kube.config
+```
+Now Update the server endpoint in the kubeconfig file to point to your load balancer:
+
+```
+sed -i 's/127.0.0.1/<LOAD_BALANCER_IP>/g' /path/to/your/kube.config
+```
+5. Verify the Setup
+
+Test the connection using kubectl:
+
+```
+kubectl --kubeconfig=/path/to/your/kube.config get nodes --insecure-skip-tls-verify
+```
+
 ## Troubleshooting
 
 ### Issue: Unable to View Pod Logs

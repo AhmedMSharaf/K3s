@@ -166,7 +166,7 @@ chmod +x install.sh
   INSTALL_K3S_SKIP_DOWNLOAD=true ./install.sh
   ```
 Note: The Datebase in This Case will be sqllite
-### 4.4 Install K3s Server (Single Controle Plane Node)
+### 4.4 Install K3s Server (Multi Controle Plane Node)
 
 1. Set an environment variable for the K3s token (used for node registration):
   ```
